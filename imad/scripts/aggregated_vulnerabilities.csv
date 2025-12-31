@@ -1,0 +1,111 @@
+id,title,severity,moduleName,fixedIn,source_file
+SNYK-PYTHON-URLLIB3-10390193,Open Redirect,medium,urllib3,2.5.0,pti_o2.json
+SNYK-JAVA-ORGAPACHEKAFKA-10336719,Server-side Request Forgery (SSRF) | Deserialization of Untrusted Data,high,org.apache.kafka:kafka-clients,3.9.1,smo_teiv.json
+SNYK-JAVA-ORGJETBRAINSKOTLIN-2393744,Information Exposure,low,org.jetbrains.kotlin:kotlin-stdlib,2.1.0,smo_teiv.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-10176071,Improper Handling of Case Sensitivity,low,org.springframework:spring-context,"6.1.20, 6.2.7",smo_teiv.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12008931,Relative Path Traversal,high,org.springframework:spring-beans,6.2.10,smo_teiv.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12817817,Incorrect Authorization,high,org.springframework:spring-core,6.2.11,smo_teiv.json
+SNYK-JAVA-ORGAPACHECOMMONS-10734078,Uncontrolled Recursion,high,org.apache.commons:commons-lang3,3.18.0,smo_teiv.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric_plt_ranpm.json
+SNYK-JAVA-IONETTY-12485149,HTTP Request Smuggling | Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http,"4.1.125.Final, 4.2.5.Final",nonrtric_plt_rappmanager.json
+SNYK-JAVA-IONETTY-12485151,Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http2,4.1.125.Final,nonrtric_plt_rappmanager.json
+SNYK-JAVA-ORGAPACHECOMMONS-10734078,Uncontrolled Recursion,high,org.apache.commons:commons-lang3,3.18.0,nonrtric_plt_rappmanager.json
+SNYK-JAVA-ORGJETBRAINSKOTLIN-2393744,Information Exposure,low,org.jetbrains.kotlin:kotlin-stdlib,2.1.0,nonrtric_plt_rappmanager.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12817817,Incorrect Authorization,high,org.springframework:spring-core,6.2.11,nonrtric_plt_rappmanager.json
+SNYK-JAVA-ORGSPRINGFRAMEWORKSECURITY-12817818,Incorrect Authorization,high,org.springframework.security:spring-security-core,"6.4.10, 6.5.4",nonrtric_plt_rappmanager.json
+SNYK-JAVA-COMMONSIO-8161190,Uncontrolled Resource Consumption ('Resource Exhaustion'),medium,commons-io:commons-io,2.14.0,nonrtric_plt_rappmanager.json
+SNYK-GOLANG-GITHUBCOMHASHICORPGORETRYABLEHTTP-7362036,Insertion of Sensitive Information into Log File,medium,github.com/hashicorp/go-retryablehttp,0.7.7,nonrtric_rapp_orufhrecovery.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric_rapp_orufhrecovery.json
+SNYK-GOLANG-GOLANGORGXSYSUNIX-3310442,Incorrect Privilege Assignment,medium,golang.org/x/sys/unix,0.1.0,nonrtric_rapp_orufhrecovery.json
+SNYK-GOLANG-GOPKGINYAMLV3-2841557,Denial of Service (DoS) | NULL Pointer Dereference,high,gopkg.in/yaml.v3,3.0.0-20220521103104-8f96da9f5d5e,nonrtric_rapp_orufhrecovery.json
+SNYK-GOLANG-GITHUBCOMEMICKLEIGORESTFUL-2435653,Authorization Bypass,high,github.com/emicklei/go-restful,2.16.0,aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-GITHUBCOMGINGONICGIN-3324285,Improper Input Validation,medium | high,github.com/gin-gonic/gin,1.9.0,aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-GITHUBCOMPROMETHEUSCLIENTGOLANGPROMETHEUSPROMHTTP-2401819,Denial of Service (DoS),high,github.com/prometheus/client_golang/prometheus/promhttp,1.11.1,aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2-3323837,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,high,golang.org/x/net/http2,0.7.0,aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2HPACK-3358253,Denial of Service (DoS),high,golang.org/x/net/http2/hpack,0.7.0,aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-K8SIOAPIMACHINERYPKGUTILRUNTIME-8367153,Denial of Service (DoS),high,k8s.io/apimachinery/pkg/util/runtime,"0.29.0-alpha.3, 1.29.0-alpha.3",aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-K8SIOCLIENTGOTRANSPORT-8136227,Improper Output Neutralization for Logs | Information Exposure,medium,k8s.io/client-go/transport,"0.20.0-alpha.2, 1.20.0-alpha.2",aiml-fw_aihp_ips_kserve-adapter.json
+SNYK-GOLANG-GITHUBCOMGINGONICGIN-3324285,Improper Input Validation,medium | high,github.com/gin-gonic/gin,1.9.0,aiml-fw_apm_monitoring-server.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2-3160322,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,medium | high,golang.org/x/net/http2,0.4.0,aiml-fw_apm_monitoring-server.json
+SNYK-GOLANG-GOLANGORGXTEXTLANGUAGE-3043869,Improper Input Validation,medium,golang.org/x/text/language,0.3.8,aiml-fw_apm_monitoring-server.json
+SNYK-JS-BABELRUNTIME-10044504,Regular Expression Denial of Service (ReDoS),medium,@babel/runtime,"7.26.10, 8.0.0-alpha.17",oam_oam-controller.json
+SNYK-JS-JQUERY-174006,Prototype Pollution | Cross-site Scripting (XSS),medium,jquery,3.4.0,oam_oam-controller.json
+SNYK-JS-JSONWEBTOKEN-3180022,Improper Authentication | Improper Restriction of Security Token Assignment | Use of a Broken or Risky Cryptographic Algorithm,medium,jsonwebtoken,9.0.0,oam_oam-controller.json
+SNYK-JS-PATHTOREGEXP-7925106,Regular Expression Denial of Service (ReDoS),medium,path-to-regexp,"0.1.10, 1.9.0, 3.3.0, 6.3.0, 8.0.0",oam_oam-controller.json
+SNYK-JS-ECSTATIC-540354,Denial of Service (DoS),high,ecstatic,4.1.4,oam_oam-controller.json
+SNYK-JS-FOLLOWREDIRECTS-6141137,Improper Handling of Extra Parameters | Information Exposure,high | medium,follow-redirects,1.15.4,oam_oam-controller.json
+SNYK-JS-MINIMIST-2429795,Prototype Pollution,low | medium,minimist,"0.2.4, 1.2.6",oam_oam-controller.json
+SNYK-JAVA-LOG4J-1300176,Man-in-the-Middle (MitM) | Arbitrary Code Execution | SQL Injection | Deserialization of Untrusted Data | Denial of Service (DoS),low | medium | high | critical,log4j:log4j,N/A,oam_oam-controller.json
+SNYK-JAVA-ORGJSON-5488379,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,high,org.json:json,20230227,oam_oam-controller.json
+SNYK-JAVA-CHQOSLOGBACK-8539865,Server-side Request Forgery (SSRF) | Improper Neutralization of Special Elements,low | medium,ch.qos.logback:logback-core,"1.3.15, 1.5.13",oam_oam-controller.json
+SNYK-JAVA-CHQOSLOGBACK-8539867,Improper Neutralization of Special Elements,medium,ch.qos.logback:logback-classic,"1.3.15, 1.5.13",oam_oam-controller.json
+SNYK-JAVA-ORGAPACHEKARAF-536198,Information Exposure,medium,org.apache.karaf:org.apache.karaf.client,N/A,oam_oam-controller.json
+SNYK-GOLANG-GITHUBCOMHASHICORPGORETRYABLEHTTP-7362036,Insertion of Sensitive Information into Log File,medium,github.com/hashicorp/go-retryablehttp,0.7.7,nonrtric_plt_dmaapmediatorproducer.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric_plt_dmaapmediatorproducer.json
+SNYK-GOLANG-GOLANGORGXSYSUNIX-3310442,Incorrect Privilege Assignment,medium,golang.org/x/sys/unix,0.1.0,oam.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",oam.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric.json
+SNYK-GOLANG-GOLANGORGXSYSUNIX-3310442,Incorrect Privilege Assignment,medium,golang.org/x/sys/unix,0.1.0,nonrtric.json
+SNYK-JAVA-CHQOSLOGBACK-8539865,Server-side Request Forgery (SSRF) | Improper Neutralization of Special Elements,low | medium,ch.qos.logback:logback-core,"1.3.15, 1.5.13",nonrtric.json
+SNYK-JAVA-CHQOSLOGBACK-8539867,Improper Neutralization of Special Elements,medium,ch.qos.logback:logback-classic,"1.3.15, 1.5.13",nonrtric.json
+SNYK-JAVA-ORGAPACHEKAFKA-10336719,Server-side Request Forgery (SSRF) | Deserialization of Untrusted Data | Files or Directories Accessible to External Parties | Incorrect Implementation of Authentication Algorithm,high | medium,org.apache.kafka:kafka-clients,3.9.1,nonrtric.json
+SNYK-JAVA-ORGAPACHETOMCATEMBED-10264469,Improper Handling of Case Sensitivity | Allocation of Resources Without Limits or Throttling | Authentication Bypass Using an Alternate Path or Channel | Integer Overflow or Wraparound | Session Fixation | Improper Resource Shutdown or Release | Insufficient Session Expiration | Uncaught Exception | Time-of-check Time-of-use (TOCTOU) Race Condition | Path Equivalence | Improper Cleanup on Thrown Exception | Improper Neutralization,medium | high | critical,org.apache.tomcat.embed:tomcat-embed-core,"9.0.105, 10.1.41, 11.0.7",nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-10176071,Improper Handling of Case Sensitivity,low,org.springframework:spring-context,"6.1.20, 6.2.7",nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-10345766,HTTP Response Splitting | Open Redirect | Denial of Service (DoS) | Improper Handling of Case Sensitivity,medium | high | low,org.springframework:spring-web,"6.1.21, 6.2.8",nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12008931,Relative Path Traversal,high,org.springframework:spring-beans,6.2.10,nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12817817,Incorrect Authorization | Improper Handling of Case Sensitivity,high | low,org.springframework:spring-core,6.2.11,nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-7945490,Path Traversal | Improper Handling of Case Sensitivity,high | low,org.springframework:spring-webmvc,6.1.13,nonrtric.json
+SNYK-JAVA-ORGSPRINGFRAMEWORKBOOT-9804539,Improper Input Validation,medium,org.springframework.boot:spring-boot-actuator-autoconfigure,"3.3.11, 3.4.5",nonrtric.json
+SNYK-GOLANG-GITHUBCOMCYPHARFILEPATHSECUREJOIN-5889602,Directory Traversal,high,github.com/cyphar/filepath-securejoin,0.2.4,nonrtric.json
+SNYK-GOLANG-GITHUBCOMDGRIJALVAJWTGO-596515,Access Restriction Bypass,high,github.com/dgrijalva/jwt-go,4.0.0-preview1,nonrtric.json
+SNYK-GOLANG-GITHUBCOMDOCKERDISTRIBUTIONREGISTRYAPIV2-5885037,Denial of Service (DoS),medium,github.com/docker/distribution/registry/api/v2,2.8.2-beta.1,nonrtric.json
+SNYK-GOLANG-GOLANGORGXCRYPTOOPENPGPCLEARSIGN-5813980,Improper Verification of Cryptographic Signature,medium,golang.org/x/crypto/openpgp/clearsign,0.1.0,nonrtric.json
+SNYK-GOLANG-GOLANGORGXCRYPTOSSH-6130669,Authentication Bypass by Capture-replay | Incorrect Implementation of Authentication Algorithm | Allocation of Resources Without Limits or Throttling,medium | critical | high,golang.org/x/crypto/ssh,0.17.0,nonrtric.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2-3160322,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,medium | high,golang.org/x/net/http2,0.4.0,nonrtric.json
+SNYK-GOLANG-GOPKGINYAMLV3-2841557,Denial of Service (DoS) | NULL Pointer Dereference,high,gopkg.in/yaml.v3,3.0.0-20220521103104-8f96da9f5d5e,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGACTION-3317167,Information Exposure,medium,helm.sh/helm/v3/pkg/action,3.11.1,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHART-6247645,Path Traversal,medium,helm.sh/helm/v3/pkg/chart,3.14.1,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHARTLOADER-9685321,Allocation of Resources Without Limits or Throttling | Uncontrolled Recursion,high,helm.sh/helm/v3/pkg/chart/loader,3.17.3,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHARTUTIL-11799535,Allocation of Resources Without Limits or Throttling | Use of Uninitialized Resource | NULL Pointer Dereference | Path Traversal,high | medium,helm.sh/helm/v3/pkg/chartutil,3.18.5,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGDOWNLOADER-10734107,Arbitrary Code Injection | Path Traversal,high | medium,helm.sh/helm/v3/pkg/downloader,3.18.4,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGENGINE-3317168,Information Exposure,medium,helm.sh/helm/v3/pkg/engine,3.11.1,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGLINTRULES-11799538,Use of Uninitialized Resource | Path Traversal,high | medium,helm.sh/helm/v3/pkg/lint/rules,3.18.5,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGPLUGIN-6261790,Use of Uninitialized Resource,high,helm.sh/helm/v3/pkg/plugin,3.14.2,nonrtric.json
+SNYK-GOLANG-HELMSHHELMV3PKGREPO-11799541,Use of Uninitialized Resource | NULL Pointer Dereference,high | medium,helm.sh/helm/v3/pkg/repo,3.18.5,nonrtric.json
+SNYK-GOLANG-K8SIOAPIMACHINERYPKGUTILRUNTIME-8367153,Denial of Service (DoS),high,k8s.io/apimachinery/pkg/util/runtime,"0.29.0-alpha.3, 1.29.0-alpha.3",nonrtric.json
+SNYK-JAVA-IONETTY-12485149,HTTP Request Smuggling | Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http,"4.1.125.Final, 4.2.5.Final",nonrtric_plt_informationcoordinatorservice.json
+SNYK-JAVA-IONETTY-12485151,Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http2,4.1.125.Final,nonrtric_plt_informationcoordinatorservice.json
+SNYK-JAVA-ORGAPACHECOMMONS-10734078,Uncontrolled Recursion,high,org.apache.commons:commons-lang3,3.18.0,nonrtric_plt_informationcoordinatorservice.json
+SNYK-JAVA-ORGJSON-5962464,Allocation of Resources Without Limits or Throttling,high,org.json:json,20231013,nonrtric_plt_informationcoordinatorservice.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12817817,Incorrect Authorization,high,org.springframework:spring-core,6.2.11,nonrtric_plt_informationcoordinatorservice.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric_rapp_ransliceassurance.json
+SNYK-GOLANG-GOLANGORGXSYSUNIX-3310442,Incorrect Privilege Assignment,medium,golang.org/x/sys/unix,0.1.0,nonrtric_rapp_ransliceassurance.json
+SNYK-GOLANG-GITHUBCOMCYPHARFILEPATHSECUREJOIN-5889602,Directory Traversal,high,github.com/cyphar/filepath-securejoin,0.2.4,nonrtric_plt_sme.json
+SNYK-GOLANG-GITHUBCOMDOCKERDISTRIBUTIONREGISTRYAPIV2-5885037,Denial of Service (DoS),medium,github.com/docker/distribution/registry/api/v2,2.8.2-beta.1,nonrtric_plt_sme.json
+SNYK-GOLANG-GITHUBCOMGETKINKINOPENAPIOPENAPI3FILTER-9563904,Improper Handling of Highly Compressed Data (Data Amplification),high,github.com/getkin/kin-openapi/openapi3filter,0.131.0,nonrtric_plt_sme.json
+SNYK-GOLANG-GITHUBCOMGOLANGJWTJWT-8341243,Insufficient Documentation of Error Handling Techniques,low,github.com/golang-jwt/jwt,N/A,nonrtric_plt_sme.json
+SNYK-GOLANG-GITHUBCOMSIRUPSENLOGRUS-5564391,Denial of Service (DoS),high,github.com/sirupsen/logrus,"1.8.3, 1.9.1",nonrtric_plt_sme.json
+SNYK-GOLANG-GOLANGORGXCRYPTOACMEAUTOCERT-7416897,Path Traversal,medium,golang.org/x/crypto/acme/autocert,0.24.0,nonrtric_plt_sme.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2-5953327,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,high,golang.org/x/net/http2,0.17.0,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGACTION-3317167,Information Exposure,medium,helm.sh/helm/v3/pkg/action,3.11.1,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHART-6247645,Path Traversal,medium,helm.sh/helm/v3/pkg/chart,3.14.1,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHARTLOADER-9685321,Allocation of Resources Without Limits or Throttling | Uncontrolled Recursion,high,helm.sh/helm/v3/pkg/chart/loader,3.17.3,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGCHARTUTIL-11799535,Allocation of Resources Without Limits or Throttling | Use of Uninitialized Resource | NULL Pointer Dereference | Path Traversal,high | medium,helm.sh/helm/v3/pkg/chartutil,3.18.5,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGDOWNLOADER-10734107,Arbitrary Code Injection | Path Traversal,high | medium,helm.sh/helm/v3/pkg/downloader,3.18.4,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGENGINE-3317168,Information Exposure,medium,helm.sh/helm/v3/pkg/engine,3.11.1,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGLINTRULES-11799538,Use of Uninitialized Resource | Path Traversal,high | medium,helm.sh/helm/v3/pkg/lint/rules,3.18.5,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGPLUGIN-6261790,Use of Uninitialized Resource,high,helm.sh/helm/v3/pkg/plugin,3.14.2,nonrtric_plt_sme.json
+SNYK-GOLANG-HELMSHHELMV3PKGREPO-11799541,Use of Uninitialized Resource | NULL Pointer Dereference,high | medium,helm.sh/helm/v3/pkg/repo,3.18.5,nonrtric_plt_sme.json
+SNYK-GOLANG-K8SIOAPIMACHINERYPKGUTILRUNTIME-8367153,Denial of Service (DoS),high,k8s.io/apimachinery/pkg/util/runtime,"0.29.0-alpha.3, 1.29.0-alpha.3",nonrtric_plt_sme.json
+SNYK-GOLANG-GITHUBCOMGORESTYRESTYV2-6091928,Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition'),medium,github.com/go-resty/resty/v2,2.11.0,nonrtric_plt_sme.json
+SNYK-PYTHON-URLLIB3-10390193,Open Redirect,medium,urllib3,2.5.0,aiml-fw_awmf_tm.json
+SNYK-PYTHON-VALIDATORS-6008990,Regular Expression Denial of Service (ReDoS),medium,validators,0.21.0,aiml-fw_awmf_tm.json
+SNYK-PYTHON-WERKZEUG-3319935,Access Restriction Bypass | Denial of Service (DoS) | Inefficient Algorithmic Complexity | Remote Code Execution (RCE) | Directory Traversal | Allocation of Resources Without Limits or Throttling,low | high | medium,werkzeug,2.2.3,aiml-fw_awmf_tm.json
+SNYK-GOLANG-GOLANGORGXNETHTTP2-5953327,Denial of Service (DoS) | Allocation of Resources Without Limits or Throttling,high,golang.org/x/net/http2,0.17.0,ric-plt_ric-dep.json
+SNYK-GOLANG-K8SIOAPIMACHINERYPKGUTILRUNTIME-8367153,Denial of Service (DoS),high,k8s.io/apimachinery/pkg/util/runtime,"0.29.0-alpha.3, 1.29.0-alpha.3",ric-plt_ric-dep.json
+SNYK-JAVA-IONETTY-11799531,Allocation of Resources Without Limits or Throttling | Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http2,"4.1.124.Final, 4.2.4.Final",nonrtric_plt_a1policymanagementservice.json
+SNYK-JAVA-IONETTY-12485149,HTTP Request Smuggling | Improper Handling of Highly Compressed Data (Data Amplification),high,io.netty:netty-codec-http,"4.1.125.Final, 4.2.5.Final",nonrtric_plt_a1policymanagementservice.json
+SNYK-JAVA-IOPROJECTREACTORNETTY-10770514,Exposure of Sensitive System Information to an Unauthorized Control Sphere,low,io.projectreactor.netty:reactor-netty-http,"1.2.8, 1.3.0-M5",nonrtric_plt_a1policymanagementservice.json
+SNYK-JAVA-ORGAPACHETOMCATEMBED-10674391,Integer Overflow or Wraparound | Allocation of Resources Without Limits or Throttling | Improper Resource Shutdown or Release,high,org.apache.tomcat.embed:tomcat-embed-core,"9.0.107, 10.1.43, 11.0.9",nonrtric_plt_a1policymanagementservice.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12008931,Relative Path Traversal,high,org.springframework:spring-beans,6.2.10,nonrtric_plt_a1policymanagementservice.json
+SNYK-JAVA-ORGSPRINGFRAMEWORK-12817817,Incorrect Authorization,high,org.springframework:spring-core,6.2.11,nonrtric_plt_a1policymanagementservice.json

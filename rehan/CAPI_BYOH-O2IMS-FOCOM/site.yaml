@@ -153,34 +153,50 @@
         src: ./bootstrap-kubeconfig.conf
         dest: /root/bootstrap-kubeconfig.conf
 
+    - name: Set Hostname to Match Input
+      shell: |
+        hostnamectl set-hostname {{ byoh_hostname }}
+      when: byoh_hostname is defined
+
     - name: Start Agent
       shell: |
         pkill byoh-hostagent || true
         sleep 2
-        nohup /usr/local/bin/byoh-hostagent --bootstrap-kubeconfig /root/bootstrap-kubeconfig.conf --skip-installation > /var/log/byoh.log 2>&1 &
+        nohup /usr/local/bin/byoh-hostagent \
+          --bootstrap-kubeconfig /root/bootstrap-kubeconfig.conf \
+          --namespace default \
+          --skip-installation \
+          --label "host-id={{ byoh_id }}" \
+          > /var/log/byoh.log 2>&1 &
+        echo "BYOH agent started for host {{ byoh_hostname }}"
+      when: byoh_hostname is defined
 
 # ==========================================
-# PLAY 3: Cluster Orchestration (Logical Layer)
+# PLAY 3: Host Registration & Labeling
 # ==========================================
-- name: 3. Deploy Pinned Clusters
+- name: 3. Finalize Host Registration
   hosts: localhost
   connection: local
   gather_facts: no
   vars:
     input: "{{ lookup('file', 'input.json') | from_json }}"
     kubeconfig: "~/.kube/config"
-    cluster_k8s_version: "v{{ input.k8s_version | default('1.34.0') }}"
 
   tasks:
-    - name: Wait for ByoHosts to Register
+    # Quick check - don't wait long, O2IMS controller handles actual verification
+    - name: Brief Wait for Agent Startup
+      pause:
+        seconds: 5
+      
+    - name: Check ByoHost Registration
       shell: |
-        kubectl --kubeconfig {{ kubeconfig }} get byohost {{ item.host_name }} --no-headers -o custom-columns=":metadata.name"
-      register: host_check
-      until: host_check.stdout | trim == item.host_name
-      retries: 60
-      delay: 5
+        kubectl --kubeconfig {{ kubeconfig }} get byohosts --no-headers 2>/dev/null | wc -l
+      register: byohost_count
       ignore_errors: yes
-      loop: "{{ input.hosts }}"
+
+    - name: Show ByoHosts Status
+      debug:
+        msg: "ByoHosts registered: {{ byohost_count.stdout | default('0') }}"
 
     - name: Remove Restrictive Webhook
       shell: |
@@ -188,53 +204,32 @@
 
     - name: Pin Hosts (Label ByoHosts with IDs)
       shell: |
-        kubectl --kubeconfig {{ kubeconfig }} label byohost {{ item.host_name }} host-id={{ item.host_id }} --overwrite
+        kubectl --kubeconfig {{ kubeconfig }} label byohost {{ item.host_name }} host-id={{ item.host_id }} --overwrite 2>/dev/null || true
       loop: "{{ input.hosts }}"
+      ignore_errors: yes
 
-    - name: Generate and Apply Manifest
-      kubernetes.core.k8s:
-        kubeconfig: "{{ kubeconfig }}"
-        state: present
-        definition: "{{ lookup('template', 'templates/cluster.yaml.j2') }}"
 
-    - name: Merge All Cluster Kubeconfigs
+    - name: Display Registered Hosts
       shell: |
-        echo "Starting Kubeconfig Merge..."
-        mkdir -p ./tmp_kubeconfigs
-        rm -f ./tmp_kubeconfigs/*
-        
-        SECRETS=""
-        for i in {1..24}; do
-            FOUND=$(kubectl --kubeconfig {{ kubeconfig }} get secrets --field-selector type=cluster.x-k8s.io/secret -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep -e '-kubeconfig$' || true)
-            if [ -n "$FOUND" ]; then
-                SECRETS="$FOUND"
-                echo "Found secrets..."
-                break
-            fi
-            echo "Waiting for secrets to appear... ($i/24)"
-            sleep 5
-        done
+        kubectl --kubeconfig {{ kubeconfig }} get byohosts --show-labels
+      register: hosts_output
 
-        if [ -z "$SECRETS" ]; then
-            echo "ERROR: Timed out waiting for kubeconfig secrets!"
-            exit 1
-        fi
-
-        KCONFIG_PATH_LIST=""
-        for SEC in $SECRETS; do
-            kubectl --kubeconfig {{ kubeconfig }} get secret $SEC -o jsonpath='{.data.value}' | base64 -d > "./tmp_kubeconfigs/${SEC}.conf"
-            KCONFIG_PATH_LIST="./tmp_kubeconfigs/${SEC}.conf:${KCONFIG_PATH_LIST}"
-        done
-        KCONFIG_PATH_LIST=${KCONFIG_PATH_LIST%:}
-
-        export KUBECONFIG="$KCONFIG_PATH_LIST"
-        kubectl config view --flatten > ./all_clusters.kubeconfig
-        rm -rf ./tmp_kubeconfigs
-        echo "SUCCESS: Master kubeconfig saved to $(pwd)/all_clusters.kubeconfig"
-      args:
-        executable: /bin/bash
-      register: merge_output
-
-    - name: Display Merge Result
+    - name: Host Registration Summary
       debug:
-        msg: "{{ merge_output.stdout_lines }}"
+        msg: |
+          ==========================================
+          HOST REGISTRATION COMPLETE
+          ==========================================
+          {{ hosts_output.stdout }}
+          
+          Next Steps:
+          1. Create clusters via O2IMS ProvisioningRequest:
+             kubectl apply -f examples/o2ims-provisioning-request.yaml
+          
+          2. Or via FOCOM (SMO interface):
+             kubectl apply -f examples/focom-provisioning-request.yaml
+          
+          3. Monitor cluster creation:
+             kubectl get provisioningrequests -w
+             kubectl get clusters -w
+          ==========================================

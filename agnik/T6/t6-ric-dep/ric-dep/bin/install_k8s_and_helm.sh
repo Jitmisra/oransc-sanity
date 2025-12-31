@@ -61,10 +61,10 @@ start_ipv6_if () {
   fi
 }
 
-KUBEV="1.28.11"
-KUBECNIV="0.7.5"
+KUBEV="1.32.0"
+KUBECNIV="1.5.0"
 HELMV="3.14.4"
-DOCKERV="20.10.21"
+DOCKERV="27.0.3"
 
 echo running ${0}
 while getopts ":k:d:e:n:c" o; do
@@ -99,21 +99,22 @@ printenv
 
 IPV6IF=""
 
-rm -rf /opt/config
-mkdir -p /opt/config
-echo "" > /opt/config/docker_version.txt
-echo "1.16.0" > /opt/config/k8s_version.txt
-echo "0.7.5" > /opt/config/k8s_cni_version.txt
-echo "3.14.4" > /opt/config/helm_version.txt
-echo "$(hostname -I)" > /opt/config/host_private_ip_addr.txt
-echo "$(curl ifconfig.co)" > /opt/config/k8s_mst_floating_ip_addr.txt
-echo "$(hostname -I)" > /opt/config/k8s_mst_private_ip_addr.txt
-echo "__mtu__" > /opt/config/mtu.txt
-echo "__cinder_volume_id__" > /opt/config/cinder_volume_id.txt
-echo "$(hostname)" > /opt/config/stack_name.txt
+WORKSPACE_DIR="/tmp/k8s_install_workspace"
+rm -rf ${WORKSPACE_DIR}
+mkdir -p ${WORKSPACE_DIR}
+echo "${DOCKERV}" > ${WORKSPACE_DIR}/docker_version.txt
+echo "${KUBEV}" > ${WORKSPACE_DIR}/k8s_version.txt
+echo "${KUBECNIV}" > ${WORKSPACE_DIR}/k8s_cni_version.txt
+echo "${HELMV}" > ${WORKSPACE_DIR}/helm_version.txt
+echo "$(hostname -I)" > ${WORKSPACE_DIR}/host_private_ip_addr.txt
+echo "$(curl -s ifconfig.co)" > ${WORKSPACE_DIR}/k8s_mst_floating_ip_addr.txt
+echo "$(hostname -I)" > ${WORKSPACE_DIR}/k8s_mst_private_ip_addr.txt
+echo "__mtu__" > ${WORKSPACE_DIR}/mtu.txt
+echo "__cinder_volume_id__" > ${WORKSPACE_DIR}/cinder_volume_id.txt
+echo "$(hostname)" > ${WORKSPACE_DIR}/stack_name.txt
 
 ISAUX='false'
-if [[ $(cat /opt/config/stack_name.txt) == *aux* ]]; then
+if [[ $(cat ${WORKSPACE_DIR}/stack_name.txt) == *aux* ]]; then
   ISAUX='true'
 fi
 
@@ -121,9 +122,19 @@ modprobe -- ip_vs
 modprobe -- ip_vs_rr
 modprobe -- ip_vs_wrr
 modprobe -- ip_vs_sh
-modprobe -- nf_conntrack_ipv4
-modprobe -- nf_conntrack_ipv6
-modprobe -- nf_conntrack_proto_sctp
+modprobe -- br_netfilter
+modprobe -- nf_conntrack_ipv4 2>/dev/null || modprobe -- nf_conntrack
+modprobe -- nf_conntrack_ipv6 2>/dev/null || true
+modprobe -- nf_conntrack_proto_sctp 2>/dev/null || true
+
+# Ensure modules load on boot
+cat > /etc/modules-load.d/k8s.conf <<EOF
+br_netfilter
+ip_vs
+ip_vs_rr
+ip_vs_wrr
+ip_vs_sh
+EOF
 
 if [ ! -z "$IPV6IF" ]; then
   start_ipv6_if $IPV6IF
@@ -172,18 +183,26 @@ elif [[ ${UBUNTU_RELEASE} == 20.* ]]; then
   if [ ! -z "${DOCKERV}" ]; then
     DOCKERVERSION="${DOCKERV}-0ubuntu1~20.04.2"  # 20.10.21-0ubuntu1~20.04.2
   fi
+elif [[ ${UBUNTU_RELEASE} == 22.* ]] || [[ ${UBUNTU_RELEASE} == 24.* ]]; then
+  echo "Installing on Ubuntu $UBUNTU_RELEASE (Jammy Jellyfish / Noble Numbat)"
+  # Use docker.io from Ubuntu repos for 22.04 and 24.04
+  DOCKERVERSION=""
 else
   echo "Unsupported Ubuntu release ($UBUNTU_RELEASE) detected.  Exit."
 fi
 
 echo "docker version to use = "${DOCKERVERSION}
 
-#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-#echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
+# Setup Kubernetes repository based on version
+K8S_MAJOR_MINOR=$(echo ${KUBEV} | cut -d. -f1,2)
+mkdir -p /etc/apt/keyrings
 
-mkdir /etc/apt/keyrings
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# Remove old Kubernetes repo files if they exist
+rm -f /etc/apt/sources.list.d/kubernetes.list
+rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${K8S_MAJOR_MINOR}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v${K8S_MAJOR_MINOR}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 mkdir -p /etc/apt/apt.conf.d
 echo "APT::Acquire::Retries \"3\";" > /etc/apt/apt.conf.d/80-retries
@@ -198,24 +217,46 @@ fi
 
 APTOPTS="--allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold "
 
-for PKG in kubeadm docker.io; do
-  INSTALLED_VERSION=$(dpkg --list |grep ${PKG} |tr -s " " |cut -f3 -d ' ')
-  if [ ! -z ${INSTALLED_VERSION} ]; then
-    if [ "${PKG}" == "kubeadm" ]; then
-      kubeadm reset -f
-      rm -rf ~/.kube
-      apt-get -y $APTOPTS remove kubeadm kubelet kubectl kubernetes-cni
-    else
-      apt-get -y $APTOPTS remove "${PKG}"
-    fi
-  fi
-done
-apt-get -y autoremove
+# Handle Kubernetes cleanup
+INSTALLED_KUBEADM=$(dpkg --list 2>/dev/null | grep kubeadm | tr -s " " | cut -f3 -d ' ')
+if [ ! -z "${INSTALLED_KUBEADM}" ]; then
+  echo "Removing existing Kubernetes installation..."
+  kubeadm reset -f
+  rm -rf ~/.kube
+  apt-get -y $APTOPTS remove kubeadm kubelet kubectl kubernetes-cni
+  apt-get -y autoremove
+fi
 
-if [ -z ${DOCKERVERSION} ]; then
-  apt-get install -y $APTOPTS docker.io
-else
-  apt-get install -y $APTOPTS docker.io=${DOCKERVERSION}
+# Handle Docker installation - skip if recent version exists
+INSTALLED_DOCKER=$(docker --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1)
+SKIP_DOCKER_INSTALL=false
+
+if [ ! -z "${INSTALLED_DOCKER}" ]; then
+  echo "Found Docker version: ${INSTALLED_DOCKER}"
+  # Compare versions - if installed version >= 20.10, skip reinstall
+  DOCKER_MAJOR=$(echo ${INSTALLED_DOCKER} | cut -d. -f1)
+  DOCKER_MINOR=$(echo ${INSTALLED_DOCKER} | cut -d. -f2)
+  
+  if [ ${DOCKER_MAJOR} -gt 20 ] || ([ ${DOCKER_MAJOR} -eq 20 ] && [ ${DOCKER_MINOR} -ge 10 ]); then
+    echo "Docker version ${INSTALLED_DOCKER} is recent enough. Skipping Docker installation."
+    SKIP_DOCKER_INSTALL=true
+  else
+    echo "Docker version ${INSTALLED_DOCKER} is too old. Will reinstall."
+    # Clean up old Docker installation and GPG keys
+    apt-get -y $APTOPTS remove docker.io docker-ce docker-ce-cli containerd.io
+    rm -f /etc/apt/keyrings/docker.gpg
+    rm -f /etc/apt/sources.list.d/docker.list
+    apt-get -y autoremove
+  fi
+fi
+
+if [ "${SKIP_DOCKER_INSTALL}" = false ]; then
+  echo "Installing Docker..."
+  if [ -z ${DOCKERVERSION} ]; then
+    apt-get install -y $APTOPTS docker.io
+  else
+    apt-get install -y $APTOPTS docker.io=${DOCKERVERSION}
+  fi
 fi
 cat > /etc/docker/daemon.json <<EOF
 {
@@ -303,8 +344,8 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 mode: ipvs
 EOF
-  elif [[ ${KUBEV} == 1.28.* ]] ; then
-    echo "Do Nothing for now."
+  elif [[ ${KUBEV} == 1.28.* ]] || [[ ${KUBEV} == 1.29.* ]] || [[ ${KUBEV} == 1.30.* ]] || [[ ${KUBEV} == 1.31.* ]] || [[ ${KUBEV} == 1.32.* ]] ; then
+    echo "Using modern Kubernetes version ${KUBEV} - no legacy config needed."
     else
     echo "Unsupported Kubernetes version requested.  Bail."
     exit
@@ -331,7 +372,7 @@ subjects:
     namespace: kube-system
 EOF
 
-if [[ ${KUBEV} == 1.28.11 ]]; then
+if [[ ${KUBEV} == 1.28.* ]] || [[ ${KUBEV} == 1.29.* ]] || [[ ${KUBEV} == 1.30.* ]] || [[ ${KUBEV} == 1.31.* ]] || [[ ${KUBEV} == 1.32.* ]]; then
   kubeadm init --pod-network-cidr=10.244.0.0/16
   mkdir -p /run/flannel
 cat <<EOF > /run/flannel/subnet.env
@@ -354,29 +395,36 @@ fi
 
   kubectl get pods --all-namespaces
 
-if [[ ${KUBEV} == 1.28.11 ]]; then
+if [[ ${KUBEV} == 1.28.* ]] || [[ ${KUBEV} == 1.29.* ]] || [[ ${KUBEV} == 1.30.* ]] || [[ ${KUBEV} == 1.31.* ]] || [[ ${KUBEV} == 1.32.* ]]; then
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  # Wait for flannel to be ready first
+  wait_for_pods_running 1 kube-flannel
+  # Restart containerd and kubelet to recognize CNI plugin (fixes Ubuntu 24.04 issue)
+  echo "Restarting containerd and kubelet to initialize CNI..."
+  systemctl restart containerd
+  systemctl restart kubelet
+  sleep 30
+  # Remove control-plane taint so CoreDNS can schedule
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule- 2>/dev/null || true
+  # Remove not-ready taint if it exists
+  kubectl taint nodes --all node.kubernetes.io/not-ready:NoSchedule- 2>/dev/null || true
+  # Now wait for all kube-system pods including CoreDNS
+  wait_for_pods_running 7 kube-system
 else
   # we refer to version 0.18.1 because later versions use namespace kube-flannel instead of kube-system TODO
   kubectl apply -f "https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml"
-fi
-
-if [[ ${KUBEV} == 1.28.11 ]]; then
-  wait_for_pods_running 7 kube-system
-  wait_for_pods_running 1 kube-flannel
-  kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
-else
   wait_for_pods_running 8 kube-system
   kubectl taint nodes --all node-role.kubernetes.io/master-
 fi
 
 
-  HELMV=$(cat /opt/config/helm_version.txt)
+  HELMV=$(cat ${WORKSPACE_DIR}/helm_version.txt)
   HELMVERSION=${HELMV}
+  cd ${WORKSPACE_DIR}
   if [ ! -e helm-v${HELMVERSION}-linux-amd64.tar.gz ]; then
     wget https://get.helm.sh/helm-v${HELMVERSION}-linux-amd64.tar.gz
   fi
-  cd /root && rm -rf Helm && mkdir Helm && cd Helm
+  rm -rf Helm && mkdir Helm && cd Helm
   tar -xvf ../helm-v${HELMVERSION}-linux-amd64.tar.gz
   mv linux-amd64/helm /usr/local/bin/helm
 

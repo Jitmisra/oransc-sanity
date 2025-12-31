@@ -1,0 +1,23 @@
+# FOCOM Provisioning Request (Template-based)
+# Uses ClusterTemplate approach with full parameters
+apiVersion: focom.nephio.org/v1alpha1
+kind: FocomProvisioningRequest
+metadata:
+  name: my-cluster-request
+  namespace: default
+spec:
+  oCloudNamespace: "default"
+  templateName: "byoh-workload-cluster"
+  templateParameters:
+    clusterName: myCluster
+    k8sVersion: "v1.32.0"
+    clusterProvisioner: byoh
+    hosts:
+      masters:
+        - hostId: 1
+          hostName: byoh-1
+          hostIp: "10.204.86.147"
+      workers:
+        - hostId: 2
+          hostName: byoh-2
+          hostIp: "10.204.86.148"

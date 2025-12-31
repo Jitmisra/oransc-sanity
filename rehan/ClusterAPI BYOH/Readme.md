@@ -232,6 +232,9 @@ kubectl get clusters
 
 # Delete a specific cluster
 kubectl delete cluster <cluster_name>
+
+#Delete the cluster CSR 
+Kubectl delete csr <cluster_csr_name> 
 ```
 
 **Note:** This deletes the Kubernetes cluster object. The physical machines will remain running but will be released by the BYOH controller. To reuse them, you may need to clean up the `byoh-hostagent` process on the target server.
@@ -240,10 +243,7 @@ kubectl delete cluster <cluster_name>
 
 To change the version of Kubernetes being deployed:
 
-1. Open `site.yaml`
-2. Locate `target_k8s_version: "1.34.0"` (under Play 2 variables)
-3. Update it to your desired version (e.g., `1.30.0`)
-4. Ensure `cluster_k8s_version` (under Play 3 variables) matches (e.g., `v1.30.0`)
+1. Open `input.json' and put your required version in this parameter: "k8s_version": "1.32.0", 
 
 ## 🛠 Troubleshooting
 

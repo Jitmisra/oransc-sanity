@@ -362,21 +362,177 @@ install_devtron() {
     echo "Devtron Dashboard is ready at: $DEVTRON_URL"
 }
 
+# =========================
+# O2IMS and FOCOM Operators
+# =========================
+build_o2ims_operator() {
+    echo "=== [12/14] Building O2IMS Operator ==="
+    
+    local O2IMS_DIR="$REPO_DIR/o2ims-operator"
+    local O2IMS_IMAGE="o2ims-controller:local"
+    
+    if [ ! -d "$O2IMS_DIR" ]; then
+        echo "ERROR: O2IMS operator directory not found at $O2IMS_DIR"
+        return 1
+    fi
+    
+    # Build Docker image
+    echo "Building O2IMS operator image..."
+    pushd "$O2IMS_DIR" > /dev/null
+    sudo docker build -t "$O2IMS_IMAGE" .
+    
+    # Import into containerd
+    echo "Importing O2IMS image into Kubernetes..."
+    sudo docker save "$O2IMS_IMAGE" -o /tmp/o2ims-controller.tar
+    sudo ctr -n k8s.io images import /tmp/o2ims-controller.tar
+    sudo rm -f /tmp/o2ims-controller.tar
+    popd > /dev/null
+    
+    echo "O2IMS operator image built: $O2IMS_IMAGE"
+}
+
+deploy_o2ims_operator() {
+    echo "=== [13/14] Deploying O2IMS Operator ==="
+    
+    local O2IMS_DIR="$REPO_DIR/o2ims-operator"
+    
+    # Apply CRDs
+    echo "Applying O2IMS CRDs..."
+    kubectl apply -f "$O2IMS_DIR/crds/provisioningrequest.yaml"
+    kubectl apply -f "$O2IMS_DIR/crds/clustertemplate.yaml"
+    
+    # Deploy operator
+    echo "Deploying O2IMS operator..."
+    kubectl apply -f "$O2IMS_DIR/deploy/deployment.yaml"
+    
+    # Wait for deployment
+    echo "Waiting for O2IMS operator to be ready..."
+    kubectl -n o2ims-system rollout status deployment/o2ims-controller --timeout=120s || true
+    
+    # Apply default ClusterTemplates
+    echo "Applying default ClusterTemplates..."
+    kubectl apply -f "$REPO_DIR/examples/cluster-template-single-node.yaml"
+    kubectl apply -f "$REPO_DIR/examples/cluster-template-ha.yaml"
+    kubectl apply -f "$REPO_DIR/examples/cluster-template-edge.yaml"
+    
+    echo "O2IMS operator deployed successfully"
+    echo "Available ClusterTemplates:"
+    kubectl get clustertemplates
+}
+
+build_focom_operator() {
+    echo "=== Building FOCOM Operator ==="
+    
+    local FOCOM_DIR="$REPO_DIR/focom-operator"
+    local FOCOM_IMAGE="focom-controller:local"
+    
+    if [ ! -d "$FOCOM_DIR" ]; then
+        echo "WARNING: FOCOM operator directory not found at $FOCOM_DIR"
+        return 0
+    fi
+    
+    # Build Docker image
+    echo "Building FOCOM operator image..."
+    pushd "$FOCOM_DIR" > /dev/null
+    sudo docker build -t "$FOCOM_IMAGE" .
+    
+    # Import into containerd
+    echo "Importing FOCOM image into Kubernetes..."
+    sudo docker save "$FOCOM_IMAGE" -o /tmp/focom-controller.tar
+    sudo ctr -n k8s.io images import /tmp/focom-controller.tar
+    sudo rm -f /tmp/focom-controller.tar
+    popd > /dev/null
+    
+    echo "FOCOM operator image built: $FOCOM_IMAGE"
+}
+
+deploy_focom_operator() {
+    echo "=== [14/14] Deploying FOCOM Operator ==="
+    
+    local FOCOM_DIR="$REPO_DIR/focom-operator"
+    local FOCOM_IMAGE="focom-controller:local"
+    
+    # Build FOCOM controller image
+    echo "Building FOCOM controller image..."
+    pushd "$FOCOM_DIR" > /dev/null
+    sudo docker build -t "$FOCOM_IMAGE" .
+    
+    # Import into containerd
+    echo "Importing FOCOM controller image into Kubernetes..."
+    sudo docker save "$FOCOM_IMAGE" -o /tmp/focom-controller.tar
+    sudo ctr -n k8s.io images import /tmp/focom-controller.tar
+    sudo rm -f /tmp/focom-controller.tar
+    popd > /dev/null
+    
+    # Apply CRD
+    echo "Applying FOCOM CRDs..."
+    kubectl apply -f "$FOCOM_DIR/focomprovisioningrequest-crd.yaml"
+    
+    # Deploy operator (uses hostPath to read input.json directly - no ConfigMap needed!)
+    echo "Deploying FOCOM operator..."
+    kubectl apply -f "$FOCOM_DIR/deployment.yaml"
+    
+    # Wait for deployment
+    echo "Waiting for FOCOM operator to be ready..."
+    kubectl -n focom-system rollout status deployment/focom-controller --timeout=120s || true
+    
+    echo "FOCOM operator deployed successfully"
+    echo "NOTE: input.json is mounted directly via hostPath - changes are picked up instantly!"
+}
+
+build_ansible_runner() {
+    echo "=== Building Ansible Runner Image ==="
+    
+    local ANSIBLE_DIR="$REPO_DIR/o2ims-operator/ansible-runner"
+    local ANSIBLE_IMAGE="ansible-runner:local"
+    
+    if [ ! -d "$ANSIBLE_DIR" ]; then
+        echo "WARNING: Ansible runner directory not found at $ANSIBLE_DIR"
+        return 0
+    fi
+    
+    # Build Docker image
+    echo "Building ansible-runner image..."
+    pushd "$ANSIBLE_DIR" > /dev/null
+    sudo docker build -t "$ANSIBLE_IMAGE" .
+    
+    # Import into containerd
+    echo "Importing ansible-runner image into Kubernetes..."
+    sudo docker save "$ANSIBLE_IMAGE" -o /tmp/ansible-runner.tar
+    sudo ctr -n k8s.io images import /tmp/ansible-runner.tar
+    sudo rm -f /tmp/ansible-runner.tar
+    popd > /dev/null
+    
+    echo "Ansible runner image built: $ANSIBLE_IMAGE"
+}
+
 final_report() {
-    echo "=== [12/12] Installation Complete ==="
+    echo "=== Installation Complete ==="
     echo "-----------------------------------"
     echo "Mgmt Node IP: $INTERNAL_IP"
     echo "K8s Version:  $(kubectl version --short 2>/dev/null || kubectl version | grep Server)"
     echo "BYOH Agent:   $AGENT_DEST_PATH (Built Locally)"
     echo "BYOH Image:   $BYOH_IMAGE (Built Locally)"
     echo "-----------------------------------"
-    echo "IMPORTANT: Run Ansible to setup Workers using this command:"
-    echo "ansible-playbook site.yaml -e agent_binary=\"$AGENT_DEST_PATH\""
+    echo "O2IMS Operator: Deployed to o2ims-system namespace"
+    echo "FOCOM Operator: Deployed to focom-system namespace"
+    echo "Ansible Runner: Built (ansible-runner:local)"
     echo "-----------------------------------"
-    echo "Run this to get kubectl auto completion"
-    echo "source <(kubectl completion bash) >> ~/.bashrc"
-    echo "kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null"
-    echo "=== Mgmt cluster installed successfully ==="
+    echo ""
+    echo "FULLY AUTOMATED WORKFLOW:"
+    echo ""
+    echo "1. Edit input.json with your host details"
+    echo ""
+    echo "2. Create cluster (hosts will be auto-registered):"
+    echo "   kubectl apply -f examples/focom-provisioning-request.yaml"
+    echo ""
+    echo "3. Monitor cluster status:"
+    echo "   kubectl get focomprovisioningrequests"
+    echo "   kubectl get provisioningrequests"
+    echo "   kubectl get clusters"
+    echo ""
+    echo "-----------------------------------"
+    echo "=== Mgmt cluster with O2IMS/FOCOM installed successfully ===" 
 }
 
 # =========================
@@ -394,6 +550,11 @@ main() {
     install_tools
     setup_capi_byoh
     install_devtron
+    build_o2ims_operator
+    deploy_o2ims_operator
+    build_focom_operator
+    deploy_focom_operator
+    build_ansible_runner
     final_report
 }
 

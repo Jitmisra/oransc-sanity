@@ -1,3 +1,3 @@
 [submodule "rehan/ClusterAPI BYOH/cluster-api-provider-bringyourownhost"]
 	path = rehan/ClusterAPI BYOH/cluster-api-provider-bringyourownhost
-	url = https://github.com/RehanFazal77/cluster-api-provider-bringyourownhost.git
+	url = https://github.com/vmware-tanzu/cluster-api-provider-bringyourownhost

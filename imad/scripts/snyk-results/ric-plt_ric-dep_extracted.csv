@@ -1,0 +1,5 @@
+id,title,severity,moduleName,fixedIn
+SNYK-GOLANG-GOLANGORGXNETHTTP2-5953327,Denial of Service (DoS),high,golang.org/x/net/http2,0.17.0
+SNYK-GOLANG-GOLANGORGXNETHTTP2-5958903,Allocation of Resources Without Limits or Throttling,high,golang.org/x/net/http2,0.17.0
+SNYK-GOLANG-GOLANGORGXNETHTTP2-6531285,Allocation of Resources Without Limits or Throttling,high,golang.org/x/net/http2,0.23.0
+SNYK-GOLANG-K8SIOAPIMACHINERYPKGUTILRUNTIME-8367153,Denial of Service (DoS),high,k8s.io/apimachinery/pkg/util/runtime,"0.29.0-alpha.3, 1.29.0-alpha.3"
